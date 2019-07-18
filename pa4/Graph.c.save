@@ -1,0 +1,324 @@
+#include<stdio.h>
+#include<stdlib.h>
+#include<string.h>
+#include "Graph.h"
+
+#define WHITE 0
+#define GRAY 1
+#define BLACK 2
+
+typedef struct GraphObj
+{
+    List* adj;//An array of Lists whose ith contain the neighbors vertex
+    int* color;//An array of ints£¨or char, or strings) whose ith element
+    int* parent;//An array of ints whose ith element is the parents
+    int* distance;//An array of ints whose ith element is the distance
+    int order; // the number of vertices
+    int size; // the number of edges
+    int source; // label the vertex and used as source of the tree for BFS
+}GraphObj;
+
+typedef struct GraphObj* Graph; // private Graph type
+//returns a Graph pointing to a newly created GraphObj representing a graph
+//having n vertices and no edge;
+// all arrays are length n+1
+// where n is the # of the vertices in the Graph
+
+/*** Constructors-Destructors ***/
+
+// newGraph()
+Graph newGraph(int n)
+{
+    Graph G = malloc(sizeof(GraphObj));
+    G->adj = calloc(n + 1, sizeof(List));
+    G->color = calloc(n + 1, sizeof(int));
+    G->parent = calloc(n + 1, sizeof(int));
+    G->distance = calloc(n + 1, sizeof(int));
+    G->order = n;
+    G->size = 0;
+    G->source = NIL;
+    for (int i = 1; i <= n; i++)
+    {
+        G->adj[i] = newList();
+        G->color[i] = WHITE;
+        G->parent[i] = NIL;
+        G->distance[i] = INF;
+    }
+    return G;
+}
+
+// freeGraph()
+// frees all the memory allocated
+// for the graph
+void freeGraph(Graph* pG)
+{
+    Graph temp = *pG;
+    // free list first
+    for(int i = 1; i <= getOrder(temp); i++)
+    {
+        freeList(&(temp->adj[i]));
+    }
+
+    // free rest and set *pG to NULL
+    free(temp->adj);
+    free(temp->color);
+    free(temp->parent);
+    free(temp->distance);
+
+    // finally free *pG
+    free(*pG);
+    *pG = NULL;
+}
+
+/*** Access functions ***/
+
+// getOrder()
+// gets the number of vertices
+// in the graph
+int getOrder(Graph G)
+{
+    if (G == NULL)
+    {
+        printf("Invalid: cannot getOrder() on NULL Graph reference\n");
+        exit(1);
+    }
+    return G->order;
+}
+
+// getSize()
+// returns the number of vertices
+// in the graph
+int getSize(Graph G)
+{
+    if (G == NULL)
+    {
+        printf("Invalid: cannot getSize() on NULL graph reference\n");
+        exit(1);
+    }
+    return G->size;
+}
+
+// getSource()
+// gets the source vertex
+int getSource(Graph G)
+{
+    if (G == NULL)
+    {
+        printf("Invalid: cannot getSource() on NULL Graph reference\n");
+        exit(1);
+    }
+    return G->source;
+}
+
+
+// getParent()
+// returns the parent of the graph
+// pre: 1<=u<=getOrder(G)
+int getParent(Graph G, int u)
+{
+    if (G == NULL)
+    {
+        printf("Invalid: cannot getParent() on NULL Graph reference\n");
+        exit(1);
+    }
+    if (!(1 <= u && u <= getOrder(G)))
+    {
+        printf("Invalid: cannot getParent() if u is out of bounds\n");
+        exit(1);
+    }
+    return G->parent[u];
+}
+
+// getDist()
+// returns the distance from parent
+// and INF otherwise if getSource() is NIL
+// pre: 1<=u<=getOrder(G)
+int getDist(Graph G, int u)
+{
+    if (G == NULL)
+    {
+        printf("Invalid: cannot getDist() on NULL Graph reference\n");
+        exit(1);
+    }
+    if (u < 1 || u > getOrder(G))
+    {
+        printf("Invalid: cannot getDist() if u is out of bounds\n");
+        exit(1);
+    }
+    if(getSource(G) == NIL)
+    {
+        return INF;
+    }
+    return G->distance[u];
+}
+
+// getPath()
+// returns the shortest path in G to source u
+// or appends L to the value NIL if no such
+// path exsists
+// pre: 1<=u<=getSource(G);
+void getPath(List L, Graph G, int u)
+{
+    if (G == NULL)
+    {
+        printf("Invalid: cannot getPath() on NULL Graph reference\n");
+        exit(1);
+    }
+    if (u < 1 || u > getOrder(G))
+    {
+        printf("Invalid: cannot getPath() if u is out of bounds\n");
+        exit(1);
+    }
+    if (u == getSource(G))
+    {
+        append(L, getSource(G));
+    }
+    else if (G->parent[u] == NIL)
+    {
+        append(L, NIL);
+    }
+    else
+    {
+        getPath(L, G, G->parent[u]);
+        append(L, u);
+    }
+}
+
+/*** Manipulation procedures ***/
+
+// makeNull()
+// returns a NULL graph reference
+void makeNull(Graph G)
+{
+    if (G == NULL)
+    {
+        printf("Invalid: cannot makeNull() on NULL Graph reference\n");
+        exit(1);
+    }
+    // run through a loop clearing the graph
+    // and its adjacency lists
+    for (int i = 1; i <= getOrder(G); i++)
+    {
+        clear(G->adj[i]);
+    }
+}
+
+// addSortedEdge()
+// helper for addEdge() in sorted order
+// by using a modified insertion sort algorithm
+void addEdge(Graph G, int u, int v){
+    if(G == NULL)
+    {
+        printf("Invalid: cannot call addEdge(Graph G, int u, int v)");
+        exit(1);
+    }
+    if(u < 1 || u > getOrder(G))
+    {
+        printf("Invalid: cannot call addEdge(Graph G, int u, int v), out of bounds");
+        exit(1);
+    }
+    if(v < 1 || v > getOrder(G))
+    {
+        printf("Invalid: cannot call addEdge(Graph G, int u, int v), out of bounds");
+        exit(1);
+    }
+    addArc(G, u, v);
+    addArc(G, v, u);
+    G->size--;
+}
+// inserts a new directed edge from u to v, i.e. v is added to the
+//adjacency List of u (but not u to the adjacency List of v)
+void addArc(Graph G, int u, int v){
+    if(G == NULL)
+    {
+        printf("Invalid: cannot call addArc(Graph G, int u, int v)");
+        exit(1);
+    }
+    if(u < 1 || u > getOrder(G))
+    {
+        printf("Invalid:addArc(Graph G, int u, int v) called out of bounds");
+        exit(1);
+    }
+    if(v < 1 || v > getOrder(G))
+    {
+        printf("Invalid:addArc(Graph G, int u, int v) called out of bounds");
+        exit(1);
+    }
+
+    moveFront(G->adj[u]);
+    while(index(G->adj[u]) > -1 && v > get(G->adj[u]))
+    {
+        moveNext(G->adj[u]);
+    }
+    if(index(G->adj[u]) ==  -1)
+    {
+        append(G->adj[u], v);
+    }
+    else
+        insertBefore(G->adj[u], v);
+
+    G->size++;
+}
+
+// BFS()
+void BFS(Graph G, int s)
+{
+    for (int x = 1; x <= getOrder(G); x++)
+    {
+        G->color[x] = WHITE;
+        G->distance[x] = INF;
+        G->parent[x] = NIL;
+    }
+    G->source = s;
+    G->color[s] = GRAY;
+    G->distance[s] = 0;
+    G->parent[s] = NIL;
+    List L = newList();
+    append(L, s);
+    while(length(L) > 0)
+    {
+        int x = front(L);
+        deleteFront(L);
+        List getAdj = G->adj[x];
+        moveFront(getAdj);
+        while (index(getAdj) != -1)
+        {
+            int y = get(getAdj);
+            if (G->color[y] == WHITE)
+            {
+                G->color[y] = GRAY;
+                G->distance[y] = G->distance[x] + 1;
+                G->parent[y] = x;
+                append(L, y);
+            }
+            moveNext(getAdj);
+        }
+        G->color[x] = BLACK;
+    }
+    freeList(&L);
+}
+
+/*** Other operations ***/
+
+// printGraph()
+void printGraph(FILE* out, Graph G)
+{
+    if (G == NULL)
+    {
+        printf("Invalid: printGraph() called on NULL Graph reference\n");
+        exit(1);
+    }
+    int i;
+    for (i = 1; i <= getOrder(G); i++)
+    {
+        List list = G->adj[i];
+        fprintf(out, "%d:", i);
+        moveFront(list);
+        while (index(list) != -1)
+        {
+            fprintf(out, " %d", get(list));
+            moveNext(list);
+        }
+        fprintf(out, "\n");
+    }
+}

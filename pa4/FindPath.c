@@ -1,0 +1,88 @@
+#include<stdio.h>
+#include<stdlib.h>
+#include<string.h>
+#include"List.h"
+#include"Graph.h"
+
+int main(int argc, char* argv[])
+{
+    // check if argument is 3
+    if (argc != 3)
+    {
+        printf("Wrong number for arguments\n", argv[0]);
+        exit(1);
+    }
+
+    FILE *in = fopen(argv[1], "r");
+    FILE *out = fopen(argv[2], "w");
+
+    // if in is NULL quit
+    if (in == NULL)
+    {
+        printf("Unable to open file\n", argv[1]);
+        exit(1);
+    }
+    // if out is NULL quit
+    if (out == NULL)
+    {
+        printf("Unable to open file\n", argv[2]);
+        exit(1);
+    }
+
+    int n = 0;
+    fscanf(in, "%d", &n); // scan in vertices
+    Graph G = newGraph(n); // create a new graph
+    int x = 0; // source vertex for graph
+    int y = 0; // destination vertex for graph
+    int source = 0;  // source for BFS
+    int distance = 0;  // destination for BFS
+
+    // loop through graph and
+    // print out its adjacency lists
+    while (fgetc(in) != EOF)
+    {
+        fscanf(in, "%d", &x); // scan x
+        fscanf(in, "%d", &y); // scan y
+        // if source or destination is 0 then don't add to graph
+        if (x == 0 && y == 0)
+        {
+            break;
+        }
+        addEdge(G, x, y);
+    }
+    printGraph(out, G);
+    fprintf(out, "\n");
+
+    while (fgetc(in) != EOF)
+    {
+        fscanf(in, "%d", &source);
+        fscanf(in, "%d", &distance);
+
+        if (source == 0 && distance == 0)
+        {
+            break;
+        }
+        List list = newList();
+        BFS(G, source);
+        getPath(list, G, distance);
+        if (getDist(G, distance) != INF)
+        {
+            fprintf(out, "The distance from %d to %d is ", source,
+                   distance, length(list) - 1);
+            fprintf(out, "A shortest %d-%d path is: ", source, distance);
+            printList(out, list);
+            fprintf(out, "\n\n");
+        }
+        else
+        {
+            fprintf(out, "infinity\n", source, distance);
+            fprintf(out, "No %d-%d path exists", source, distance);
+        }
+        freeList(&list);
+    }
+
+    freeGraph(&G);
+    fclose(in);
+    fclose(out);
+    return(0);
+}

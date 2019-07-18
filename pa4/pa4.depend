@@ -1,0 +1,30 @@
+# depslib dependency file v1.0
+1543467570 source:d:\cmps101\pa4\graph.c
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+	"Graph.h"
+
+1543463735 d:\cmps101\pa4\graph.h
+	"List.h"
+
+1543463735 d:\cmps101\pa4\list.h
+
+1543463514 source:d:\cmps101\pa4\list.c
+	<stdio.h>
+	<stdlib.h>
+	"List.h"
+
+1543469195 source:d:\cmps101\pa4\main.c
+
+1543456271 source:d:\cmps101\pa4\modelgraphtest.c
+
+1543471708 source:d:\cmps101\pa4\findpath.c
+
+1543455970 source:d:\cmps101\pa4\graphtest.c
+	<stdio.h>
+	<stdlib.h>
+	"Graph.h"
+
+1543464097 source:d:\cmps101\pa4\modellisttest.c
+

@@ -1,0 +1,24 @@
+// Yongsheng Cui
+// yocui
+// pa3
+// README for pa3
+
+This project contains:
+
+Matrix.java - a representation of a matrix with
+the operations: add(), sub(), mult(),
+                scalarMult(), copy(), transpose(),
+                changeEntry(), equals(), and toString().
+
+MatrixTest.java - a test client for Matrix.java. Test whether the Martix can run the given data
+
+List.java - a list ADT, modified from pa1
+
+Sparse.java - Test command line arguments
+
+ListTest.java - a test client for List.java
+
+Makefile - makefile for pa3
+
+README - README for pa3: contains all the
+descriptions of the files and what they do.

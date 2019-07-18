@@ -1,0 +1,16 @@
+// Yongsheng Cui
+// yocui
+// Program Assignment 1: README
+
+-----LIST.JAVA-----
+Creating a doubly linked list ADT.
+
+-----LISTCLIENT.JAVA-----
+Test the List ADT.
+
+-----LEX.JAVA-----
+Sorts the given input file
+and place the sorted input into a output file.
+
+-----MAKEFILE-----
+Compiles all .java files.

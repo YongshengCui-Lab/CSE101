@@ -1,0 +1,15 @@
+# depslib dependency file v1.0
+1539850206 source:c:\users\yongsheng cui\desktop\pa2\lex.c
+
+1539850339 source:c:\users\yongsheng cui\desktop\pa2\list.c
+	<stdio.h>
+	<stdlib.h>
+	"List.h"
+
+1539850322 c:\users\yongsheng cui\desktop\pa2\list.h
+
+1539850306 source:c:\users\yongsheng cui\desktop\pa2\listclient.c
+	<stdio.h>
+	<stdlib.h>
+	"List.h"
+

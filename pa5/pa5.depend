@@ -1,0 +1,23 @@
+# depslib dependency file v1.0
+1544252284 source:d:\cmps101\pa5\findcomponents.c
+
+1544209222 d:\cmps101\pa5\list.h
+
+1544209247 d:\cmps101\pa5\graph.h
+	"List.h"
+
+1544232799 source:d:\cmps101\pa5\graph.c
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+	"Graph.h"
+
+1544233041 source:d:\cmps101\pa5\graphtest.c
+
+1544209222 source:d:\cmps101\pa5\list.c
+	<stdio.h>
+	<stdlib.h>
+	"List.h"
+
+1544233020 source:d:\cmps101\pa5\main.c
+

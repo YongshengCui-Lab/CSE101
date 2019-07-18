@@ -1,0 +1,14 @@
+// Yongsheng Cui
+// yocui
+// pa5
+// README for pa5
+
+1) README -- descripte all the files
+2) Makefile -- Makefile for pa5
+3) List.c -- Same as pa4
+4) List.h -- Header file for List.c
+5) Graph.h -- Header file for Graph.c
+6) Graph.c -- Graph ADT reused from pa4.
+7) GraphTest.c -- test client for Graph ADT
+8) FindComponents.c -- finds all strongly connected components of a
+   given graph.
